@@ -24,12 +24,50 @@ public class ClientService {
 		return clients.map(x -> new ClientDTO(x));	
 	}
 	
-	@Transactional
+	@Transactional(readOnly = true)
 	public ClientDTO findById(Long id) {
 		Optional<Client> obj = repository.findById(id);
 		Client client = obj.get();
 		return new ClientDTO(client);	
 	}
+	
+	@Transactional
+	public ClientDTO insert(ClientDTO dto) {
+		Client client = new Client();
+		copyClientDTOToClient(client,dto);
+		
+		repository.save(client);
+		
+		return new ClientDTO(client);
+		
+	}
+	
+	@Transactional
+	public ClientDTO update(Long id, ClientDTO dto) {
+		Client client = repository.getOne(id);
+		
+		copyClientDTOToClient(client,dto);
+		
+		repository.save(client);
+		
+		return new ClientDTO(client);
+	}
+
+	public Void delete(Long id) {
+		repository.deleteById(id);
+		return null;
+	}
+	
+	public void copyClientDTOToClient(Client client,ClientDTO dto) {
+		client.setName(dto.getName());
+		client.setBirthDate(dto.getBirthDate());
+		client.setChildren(dto.getChildren());
+		client.setCpf(dto.getCpf());
+		client.setIncome(dto.getIncome());
+		
+	}
+	
+	
 	
 	
 	
